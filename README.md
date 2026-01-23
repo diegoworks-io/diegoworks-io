@@ -1,24 +1,121 @@
-### Engineering Signal Report: Feature Development and Platform Foundation
+# Build in Public Report — 23/1/2026
 
-**Period:** Over the past few days, concluding on 2025-12-09
+## 🎯 PRODUCT: What Users Experience
 
-#### Narrative Summary
+**8 user-facing file(s) updated with focus on resilience and business logic**
 
-This reporting period highlights focused and significant progress within the `onof-feat` branch, demonstrating robust feature development and foundational platform enhancements. A total of 9 commits, originating from a single contributor, `diegoworks-io`, have advanced the onboarding and offboarding (ONOF) workflows, alongside critical updates to system tooling and dependencies.
+No user-facing changes
 
-The core intent of the recent work has been to evolve the ONOF feature, with specific attention to separating the onboarding and offboarding processes for improved clarity and management. Updates to the `OnboardingOffboardingPage` component and enhancements to the offboarding records hook indicate a methodical approach to refining the user experience and data handling for these vital lifecycle events. The implementation of an end-to-end onboarding workflow signifies a major step towards a complete and actionable system.
 
-Beyond feature development, strategic platform enhancements have been integrated. The addition of a Google Generative AI dependency, coupled with new `db-agent` and Supabase audit/utility scripts, positions the platform for future leverage. These additions suggest an intent to incorporate intelligent automation or analytical capabilities and to strengthen database management and observability, which are paramount for system reliability. Furthermore, a comprehensive update of all packages to their latest versions, including a fix for ESLint configuration, ensures the platform remains current, secure, and maintainable.
 
-Operationally, this work matters significantly for systems reliability and leverage. The clear separation and enhancement of onboarding and offboarding workflows directly contribute to more reliable and compliant personnel lifecycle management within the organization. This reduces manual overhead, minimizes errors, and ensures consistent application of policies. The introduction of AI capabilities represents a substantial leverage point for future innovations, potentially enabling predictive insights or intelligent assistance within workflows. The database scripts enhance our ability to monitor, audit, and maintain data integrity, underpinning the entire system's stability. Finally, the dependency updates are critical for long-term reliability and security, mitigating risks associated with outdated components.
+### Risk Profile
 
-Platform health remains excellent, with the build status reported as `ok`, and no TypeScript or ESLint errors detected. This indicates a high standard of code quality and a stable development environment, which is crucial for maintaining momentum.
 
-#### Next Steps
+**AI-Identified Risks**:
+- Introduced Risk: Schema Staleness Leading to Application Mismatch: A persistent cache introduces the possibility that `data/schema-cache.json` might not reflect the most current upstream schema. If the application code evolves to rely on newer schema features or types not yet propagated to the cache, runtime errors or incorrect behavior could occur until the next successful synchronization.
+- Introduced Risk: Cache Corruption or Inconsistency During Synchronization: Despite `[data-integrity]` flags, the `scripts/sync-schema-cache.ts` process itself is a potential point of failure. An interruption or error during the write operation to `data/schema-cache.json` (e.g., I/O error, script crash) could leave the cache file in a partially written, corrupted, or inconsistent state, making it unusable or leading to parsing errors by the application.
+- Managed Risk: Reduced Upstream Service Load and Dependency: By caching schema information locally, the developer significantly mitigates the risk of overwhelming the upstream schema source with repeated requests and reduces the application's direct dependency on its continuous availability and performance, improving overall system stability.
+- Managed Risk: Performance Bottleneck from Dynamic Schema Resolution: The caching mechanism directly addresses the performance risk associated with dynamically fetching or introspecting schema data at runtime or application startup, which can be a significant bottleneck for applications that frequently interact with data structures.
 
-Based on the current momentum and clear progress, the following areas warrant immediate focus:
+### Metrics
+- Files Changed: 8
+- Lines Added: 8
+- Avg Complexity: 0.0/10
 
-1.  **ONOF Feature Stabilization**: Continue to refine and thoroughly test the separated onboarding and offboarding workflows. Focus on end-to-end user acceptance testing to ensure all scenarios are covered and the feature behaves as expected under various conditions.
-2.  **AI Integration Validation**: Begin validating the integration of the Google Generative AI dependency. Explore specific use cases within the ONOF workflows where AI can provide immediate value or leverage, such as intelligent task suggestions or automated data processing.
-3.  **Database Tooling Adoption**: Operationalize the new `db-agent` and Supabase audit/utility scripts. Document best practices for their use and integrate them into existing platform monitoring and maintenance routines to enhance observability and data governance.
-4.  **Broader Review and Collaboration**: As the `onof-feat` branch matures, prepare for broader team review and potential integration planning with the main development line. This will ensure alignment and facilitate a smooth rollout.
+---
+
+## 🔧 KNOW-HOW: Systems & Infrastructure
+
+**12 infrastructure file(s) updated — systems orchestration, observability, and automation**
+
+### Systems Built
+**Schema Observability** (4x complexity weight)
+- Purpose: Live database schema introspection and caching
+- Files: data/schema-cache.json, scripts/sync-schema-cache.ts
+- Value: Enables feature development without manual schema audits. Auto-syncs on git events.
+
+**Forensic Analysis** (4x complexity weight)
+- Purpose: AI-powered diff analysis extracting seniority signals from code changes
+- Files: internal_pipeline/scripts/forensic_translate.ts
+- Value: Converts raw diffs into architectural insights. Identifies risk patterns automatically.
+
+**Report Generation** (5x complexity weight)
+- Purpose: Two-bucket report engine (Product + Know-How separation)
+- Files: internal_pipeline/scripts/generate_narratives.ts, internal_pipeline/scripts/generate_knowhow_narrative.ts, internal_pipeline/scripts/generate_product_narrative.ts
+- Value: One `npm run combo` → Single authoritative report → Google Drive. Evidence-driven, no marketing.
+
+**Diff Analysis Engine** (4x complexity weight)
+- Purpose: Git diff parsing with architectural keyword detection and complexity scoring
+- Files: internal_pipeline/scripts/analyze_diffs.ts
+- Value: Flags data-integrity, security-critical, and architectural changes automatically.
+
+**Workflow Orchestration** (5x complexity weight)
+- Purpose: Git workflow automation triggering schema sync and reporting
+- Files: scripts/merge-main.ts, scripts/combo.ts
+- Value: Hidden in 1-2 lines each, but activates entire pipeline on: new branch, commit, merge to main.
+
+### Architecture Overview
+End-to-end code observability pipeline. Transforms git diffs into actionable narratives with architectural insights.
+
+```
+Git Event (branch/commit/merge)
+    ↓
+Workflow Orchestration (combo.ts)
+    ↓
+Schema Cache Sync (95 tables, 40 functions)
+    ↓
+Diff Analysis (complexity scoring, keyword detection)
+    ↓
+Forensic Translation (Gemini: risk patterns, seniority signals)
+    ↓
+Two-Bucket Narratives (Product + Know-How)
+    ↓
+Google Drive Publish (auto-uploaded, shareable, final)
+```
+
+### Integration Points
+- Git workflow events (new branch, commits, merge to main)
+- Supabase REST API (schema introspection)
+- Google Generative AI (Gemini for forensic analysis)
+- Google Drive API (report publishing)
+- Pipeline orchestration (auto-triggered on git events)
+
+### DX Improvements
+✅ **Schema Awareness**: Developers now have live access to database schema without manual queries
+✅ **Automated Risk Detection**: Architectural risks identified automatically, reducing code review friction
+✅ **Report Generation**: `npm run combo` generates publishable 3-perspective report in 30 seconds
+✅ **Workflow Automation**: Schema and reports auto-sync on git events (no manual trigger needed)
+
+### Trade-Offs & Limitations
+**Current Trade-Offs & Limitations**:
+- **Schema Cache Limitations**: RLS policies and triggers require Supabase admin access (skipped in current setup)
+- **Forensic Analysis**: Limited to 50 files per run (Gemini API cost); larger commits may need batching
+- **Schema Evolution**: Cache captures current state only; migration history not tracked
+- **Fallback Behavior**: If Gemini API fails, pipeline continues with complexity scoring alone (graceful degradation)
+
+### Next Steps for Maintainability
+- **Migration History Tracking**: Enhance schema cache to track schema evolution over time
+- **Batch Forensic Analysis**: For commits >50 files, implement batching to reduce Gemini API costs
+- **Custom Narrative Templates**: Allow per-audience templates (LinkedIn vs GitHub vs internal vs hiring)
+- **Complexity Thresholds**: Set alert thresholds (e.g., email on high-complexity changes)
+- **RLS Policy Capture**: If admin access available, include RLS policy analysis in reports
+
+### Metrics
+- Files Changed: 12
+- Lines Added: 29
+- Total Complexity: 20.0
+- Avg Multiplier: 1.7x
+
+---
+
+## Summary
+
+**Total Changes**: 20 files, +37 / -5 lines
+
+**Bucket Distribution**:
+- Product: 8 files, 0.0 complexity
+- Know-How: 12 files, 20.0 complexity
+
+---
+
+_Evidence-driven report from git diffs. No marketing claims—just what was built and why it matters. Updated with each `npm run combo`._
