@@ -1,4 +1,4 @@
-<p align="center"><img src="aerial-city-zoom-motion.gif" width="100%" alt="Close black-and-white aerial city view with subtle moving traffic" /></p>
+<p align="center"><img src="aerial-city-office-loop.gif" width="100%" alt="Black-and-white aerial city slowly moves into a quiet office as one laptop screen lights up, then retraces back to the city" /></p>
 
 Hi, I'm Diego.
 
