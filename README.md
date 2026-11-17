@@ -1,6 +1,8 @@
 <p align="center"><img src="aerial-city-zoom-motion.gif" width="100%" alt="Close black-and-white aerial city view with subtle moving traffic" /></p>
 
-**Forward Deployed Engineer**
+Hi, I'm Diego.
+
+## Forward Deployed Engineer
 
 ### stack
 
