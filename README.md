@@ -1,4 +1,4 @@
-<p align="center"><img src="aerial-city-office-loop.gif" width="100%" alt="Black-and-white aerial city slowly moves into a quiet office as one laptop screen lights up, then retraces back to the city" /></p>
+<p align="center"><img src="aerial-city-office-color-loop.gif" width="100%" alt="Aerial city moves into a warm office where code appears on a laptop, then retraces back to the city" /></p>
 
 Hi, I'm Diego.
 
